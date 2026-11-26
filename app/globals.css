@@ -1,0 +1,345 @@
+@import "tailwindcss";
+
+/* ───────── 1. Токены: 3 темы через [data-theme] на <html> (?theme=a|b|c) ─────────
+   Под клиента правятся 11 базовых цветов выбранной темы + производные ниже. */
+
+/* A — Шалфей-графит (по умолчанию) */
+:root,
+:root[data-theme="a"] {
+  --bg: #D6D9D3;
+  --surface: #C9CDC5;
+  --surface-2: #BCC1B8;
+  --ink: #202421;
+  --ink-soft: #515852; /* ТЗ: #5B625C — затемнён до контраста ≥ 4.5 на --bg и --surface */
+  --line: rgba(32, 36, 33, .16);
+  --dark: #202421;
+  --on-dark: #E8EAE5;
+  --on-dark-soft: #9BA39C;
+  --accent: #6B7A5E;
+  --accent-soft: #E2E7DC;
+
+  --on-accent: #FFFFFF;
+  --glass-bg: rgba(255, 255, 255, .38);
+  --glass-border: rgba(255, 255, 255, .55);
+  --glass-inset: rgba(255, 255, 255, .5);
+  --glass-shadow: rgba(0, 0, 0, .08);
+  --overlay: rgba(32, 36, 33, .55);
+  --line-on-dark: rgba(232, 234, 229, .14);
+  --hero-fade: rgba(214, 217, 211, .55);
+  --hero-clear: rgba(214, 217, 211, 0);
+}
+
+/* B — Холодная сталь + терракота */
+:root[data-theme="b"] {
+  --bg: #D4D7DA;
+  --surface: #C6CACE;
+  --surface-2: #B8BDC2;
+  --ink: #1E2226;
+  --ink-soft: #4E5660; /* ТЗ: #58606A — затемнён до контраста ≥ 4.5 */
+  --line: rgba(30, 34, 38, .16);
+  --dark: #1E2226;
+  --on-dark: #E7E9EB;
+  --on-dark-soft: #9AA2AA;
+  --accent: #B0694A;
+  --accent-soft: #EBDDD5;
+
+  --on-accent: #FFFFFF;
+  --glass-bg: rgba(255, 255, 255, .38);
+  --glass-border: rgba(255, 255, 255, .55);
+  --glass-inset: rgba(255, 255, 255, .5);
+  --glass-shadow: rgba(0, 0, 0, .08);
+  --overlay: rgba(30, 34, 38, .55);
+  --line-on-dark: rgba(231, 233, 235, .14);
+  --hero-fade: rgba(212, 215, 218, .55);
+  --hero-clear: rgba(212, 215, 218, 0);
+}
+
+/* C — Тёмный графит */
+:root[data-theme="c"] {
+  --bg: #262726;
+  --surface: #303130;
+  --surface-2: #3A3B3A;
+  --ink: #E6E4DF;
+  --ink-soft: #A3A29C;
+  --line: rgba(230, 228, 223, .14);
+  --dark: #161716;
+  --on-dark: #E6E4DF;
+  --on-dark-soft: #8F8E89;
+  --accent: #C2A27F;
+  --accent-soft: #3D3730;
+
+  --on-accent: #161716;
+  --glass-bg: rgba(255, 255, 255, .06);
+  --glass-border: rgba(255, 255, 255, .12);
+  --glass-inset: rgba(255, 255, 255, .08);
+  --glass-shadow: rgba(0, 0, 0, .3);
+  --overlay: rgba(0, 0, 0, .6);
+  --line-on-dark: rgba(230, 228, 223, .12);
+  --hero-fade: rgba(38, 39, 38, .6);
+  --hero-clear: rgba(38, 39, 38, 0);
+}
+
+:root {
+  --menu-dim: rgba(0, 0, 0, .25);
+  --photo-shade: rgba(0, 0, 0, .65);
+  --on-photo: rgba(255, 255, 255, .96);
+
+  /* 3 гарнитуры: заголовки (Inter Tight), текст и цифры (Manrope), подпись (Unbounded) */
+  --font-heading: var(--font-tight-cyr), var(--font-tight-lat), Arial, sans-serif;
+  --font-body: var(--font-manrope-cyr), var(--font-manrope-lat), var(--font-manrope-ext), Arial, sans-serif;
+  --font-credit: "Unbounded", Arial, sans-serif;
+
+  --ease-out: cubic-bezier(.33, 1, .68, 1);
+  --gutter: 20px;
+  /* край контента: совпадает с контейнером 1440px на любых экранах (для абсолютных слоёв поверх фото) */
+  --edge: max(var(--gutter), calc((100% - 1440px) / 2 + var(--gutter)));
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 32px; }
+}
+@media (min-width: 1024px) {
+  :root { --gutter: 40px; }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-dark: var(--dark);
+  --color-on-dark: var(--on-dark);
+  --color-on-dark-soft: var(--on-dark-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-line-on-dark: var(--line-on-dark);
+  --color-on-photo: var(--on-photo);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+  --font-credit: var(--font-credit);
+}
+
+/* ───────── 2. База ───────── */
+@layer base {
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+:root[data-theme="c"] { color-scheme: dark; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  overflow-x: clip;
+  transition: background-color .3s;
+}
+@media (min-width: 768px) {
+  body { font-size: 15px; }
+}
+
+::selection { background: var(--accent); color: var(--on-accent); }
+
+* { font-style: normal !important; }
+em, i { font-style: normal; }
+
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font: inherit; letter-spacing: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: inherit; }
+input, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+}
+
+@layer components {
+
+.content-img { filter: saturate(.85); }
+
+.skip-link {
+  position: fixed; left: 12px; top: 12px; z-index: 200;
+  padding: 12px 18px; border-radius: 999px;
+  background: var(--ink); color: var(--bg); font-size: 13px;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+
+/* ───────── 3. Сетка и контейнер ───────── */
+.container-x {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.grid-x {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 16px;
+}
+@media (min-width: 768px) {
+  .grid-x { grid-template-columns: repeat(8, minmax(0, 1fr)); column-gap: 20px; }
+}
+@media (min-width: 1024px) {
+  .grid-x { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+}
+
+.section { padding-block: 88px; }
+@media (min-width: 768px) { .section { padding-block: 120px; } }
+@media (min-width: 1024px) { .section { padding-block: 160px; } }
+
+.after-h2 { margin-top: 40px; }
+@media (min-width: 768px) { .after-h2 { margin-top: 56px; } }
+@media (min-width: 1024px) { .after-h2 { margin-top: 72px; } }
+
+.measure { max-width: 46ch; }
+
+/* ───────── 4. Типографика ───────── */
+/* Шрифт заголовков (Inter Tight): заголовки, LUMEN, меню, кнопки, лого — капсом */
+.font-heading, .t-display, .t-h2, .t-h3, .t-h4, .t-nav {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.t-display { font-size: 24vw; line-height: .82; letter-spacing: -.04em; }
+.t-h2 { font-size: 34px; line-height: .98; letter-spacing: -.02em; }
+.t-h3 { font-size: 30px; line-height: 1; letter-spacing: -.01em; }
+.t-h4 { font-size: 18px; line-height: 1.15; letter-spacing: 0; font-weight: 400; }
+.t-nav { font-size: 13px; line-height: 1; letter-spacing: .04em; font-weight: 400; }
+
+/* Текст (Manrope, обычный регистр) */
+.t-body { font-family: var(--font-body); font-size: 14px; line-height: 1.6; font-weight: 400; letter-spacing: 0; }
+.t-small { font-family: var(--font-body); font-size: 13px; line-height: 1.5; font-weight: 400; letter-spacing: 0; }
+
+/* Цифры (Manrope 200, табличные) */
+.font-num, .t-num, .t-stat, .t-price {
+  font-family: var(--font-body);
+  font-weight: 200;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+.t-num { font-size: 26px; line-height: 1; }
+.t-stat { font-size: clamp(36px, 11vw, 56px); line-height: .9; white-space: nowrap; }
+.t-price { font-size: 32px; line-height: 1; }
+
+@media (min-width: 768px) {
+  .t-display { font-size: clamp(96px, 21vw, 300px); }
+  .t-h2 { font-size: clamp(40px, 4.6vw, 68px); }
+  .t-h3 { font-size: 44px; }
+  .t-h4 { font-size: 22px; }
+  .t-body { font-size: 15px; }
+  .t-num { font-size: 32px; }
+  .t-stat { font-size: 80px; }
+  .t-price { font-size: 40px; }
+}
+
+/* Текст до N строк */
+.clamp-5 { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+
+}
+
+/* ───────── 5. Эффекты AW-Flow ───────── */
+
+/* Пока JS не поставил начальное состояние через gsap.set — элемент не мигает.
+   Класс js-wait ставит инлайн-скрипт в <head> и снимает SmoothScroll (страховка 2.5 с). */
+html.js-wait [data-anim]:not([data-anim-ready]) { visibility: hidden; }
+
+/* 3.2 Fade Reveal */
+.fade-reveal {
+  -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
+  mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+}
+
+@layer components {
+/* 3.3 Hover Fill */
+.hover-fill { position: relative; display: inline-block; }
+.hover-fill__top {
+  position: absolute; inset: 0;
+  color: var(--accent);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path .55s var(--ease-out);
+  pointer-events: none;
+  white-space: inherit;
+}
+@media (hover: hover) {
+  .hover-fill-host:hover .hover-fill__top,
+  .hover-fill-host:focus-visible .hover-fill__top { clip-path: inset(0 0% 0 0); }
+}
+
+/* ───────── 6. Кнопки (шрифт заголовков) ───────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  height: 52px; padding: 0 28px; border-radius: 999px;
+  font-family: var(--font-heading); font-weight: 400; text-transform: uppercase;
+  font-size: 13px; line-height: 1; letter-spacing: .06em;
+  transition: background .35s, color .35s, opacity .35s;
+  white-space: nowrap;
+}
+.btn__arrow { font-size: 13px; }
+.btn--primary { background: var(--ink); color: var(--bg); }
+.btn--inverse { background: var(--on-dark); color: var(--dark); }
+@media (hover: hover) {
+  .btn--primary:hover:not(:disabled), .btn--inverse:hover:not(:disabled) { background: var(--accent); color: var(--on-accent); }
+}
+.btn:disabled, .btn[aria-disabled="true"] { opacity: .4; cursor: not-allowed; }
+
+.btn-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-heading); font-weight: 400; text-transform: uppercase;
+  font-size: 13px; line-height: 1.2; letter-spacing: .06em;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+/* ───────── 7. Списки с тире ───────── */
+.dash-list { display: flex; flex-direction: column; gap: 10px; }
+.dash-list li { display: flex; align-items: baseline; gap: 14px; }
+.dash-list li::before {
+  content: ""; flex: 0 0 28px; height: 1px; background: var(--dash, var(--ink-soft));
+  transform: translateY(-.3em);
+}
+
+/* ───────── 8. Стекло (меню) ───────── */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-inset), 0 10px 30px var(--glass-shadow);
+}
+
+/* ───────── 9. Разное ───────── */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; }
+}
+
+/* ───────── 10. View Transitions: перелёт фото зала ───────── */
+::view-transition-group(.hall-photo) { animation-duration: .7s; animation-timing-function: cubic-bezier(.33, 1, .68, 1); }
+::view-transition-old(.hall-photo),
+::view-transition-new(.hall-photo) { height: 100%; width: 100%; object-fit: cover; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .35s; }
+
+/* ───────── 11. Зоны нажатия: мелкие текстовые ссылки получают невидимую область ≥ 44px ───────── */
+@layer components {
+  .btn-link, .hit { position: relative; }
+  .btn-link::after, .hit::after { content: ""; position: absolute; inset: -12px -6px; }
+}
